@@ -1,10 +1,15 @@
-let express = require("express")
+let express = require("express");
+let mongoose = require("mongoose");
 
-module.exports = function createApp(){
-  let app = express()
-  app.use(express.json()) 
-  app.use(express.urlencoded({ extended: true })) 
-  
-
-  return app
-}
+module.exports = function create_app(mongoURL) {
+	let app = express();
+	return new Promise(async (resolve) => {
+		app.use(express.json());
+		app.use(express.urlencoded({ extended: true }));
+		await mongoose.connect(mongoURL, {
+			useNewUrlParser: true,
+			useUnifiedTopology: true,
+		});
+		resolve(app);
+	});
+};
