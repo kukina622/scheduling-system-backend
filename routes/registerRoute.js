@@ -1,5 +1,5 @@
 let express = require("express");
-let SHA256 = require("crypto-js/sha256");
+let SHA256 = require("js-sha256").sha256;
 let userModel = require("../models/userModel");
 
 let router = express.Router();
@@ -12,15 +12,15 @@ router.post("/register", async (req, res) => {
 	};
 	// 檢查學號是否註冊過
 	let isExisted = await userModel.exists({ sid: registerInfo.sid });
-  
+
 	if (isExisted) {
-		res.json({ success: false, message: "SID is existed" });
+		res.status(409).json({ success: false, message: "SID is existed" });
 	} else {
 		// 建立新帳號
 		userModel
 			.create(registerInfo)
 			.then(() => {
-				res.json({ success: true, message: "Registered success" });
+				res.status(201).json({ success: true, message: "Registered success" });
 			})
 			.catch((err) => {
 				console.log(err);
