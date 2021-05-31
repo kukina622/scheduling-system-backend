@@ -3,10 +3,11 @@ let SHA256 = require("js-sha256").sha256;
 let userModel = require("../models/userModel");
 let jwt = require("jsonwebtoken");
 let formValidation = require("../middlewares/formValidation");
+let formatter = require("../middlewares/formatter");
 
 let router = express.Router();
 
-router.post("/login", formValidation.login, async (req, res) => {
+router.post("/login", formValidation.login,formatter.login, async (req, res) => {
 	const serect_key = await req.app.get("serect_key");
 	const loginInfo = {
 		sid: req.body.sid.toUpperCase(),
