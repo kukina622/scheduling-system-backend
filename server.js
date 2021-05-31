@@ -9,6 +9,6 @@ const serect_key=process.env.SECRET_KEY
 
 create_app(mongoURL,serect_key).then((app) => {
 	app.listen(port, () => {
-		console.log(`Start listening ${port} port`);
+		console.log(`Start listening localhost:${port}`);
 	});
 });

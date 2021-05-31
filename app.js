@@ -1,5 +1,8 @@
 let express = require("express");
 let mongoose = require("mongoose");
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerOptions = require("./swagger");
 
 // route
 let registerRoute = require("./routes/registerRoute");
@@ -19,6 +22,11 @@ module.exports = function create_app(mongoURL,serect_key) {
 		app.set("serect_key",serect_key)
 		app.use("/api", registerRoute);
 		app.use("/api", loginRoute);
+
+		//swagger open api 
+		const specs = swaggerJsdoc(swaggerOptions)
+		app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+
 		resolve(app);
 	});
 };
