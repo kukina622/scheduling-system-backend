@@ -17,12 +17,10 @@ router.post("/login", validate(formValidation.login), async (req, res) => {
   let doc = await userModel.findOne(loginInfo);
   // 檢查帳號密碼是否正確
   if (doc === null) {
-    res.status(401).json({ success: false, message: "Wrong Sid or password" });
+    res.status(401).json({ message: "Wrong Sid or password" });
   } else {
     const token = jwt.sign({ sid: doc.sid }, serect_key, { expiresIn: "1h" });
-    res
-      .status(200)
-      .json({ success: true, message: "Login successful", token: token });
+    res.status(200).json({ sid: loginInfo.sid, token: token });
   }
 });
 

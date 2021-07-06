@@ -16,13 +16,13 @@ router.post("/register",validate(formValidation.register), async (req, res) => {
 	let isExisted = await userModel.exists({ sid: registerInfo.sid });
 
 	if (isExisted) {
-		res.status(409).json({ success: false, message: "SID is existed" });
+		res.status(409).json({ message: "SID is existed" });
 	} else {
 		// 建立新帳號
 		userModel
 			.create(registerInfo)
 			.then(() => {
-				res.status(201).json({ success: true, message: "Registered success" });
+				res.status(201).end()
 			})
 			.catch((err) => {
 				console.log(err);
