@@ -1,12 +1,12 @@
 let express = require("express");
 let SHA256 = require("js-sha256").sha256;
 let userModel = require("../models/userModel");
-let formValidation = require("../middlewares/formValidation");
-let formatter = require("../middlewares/formatter");
+const formValidation = require("../middlewares/formValidation");
+const { validate } = require('express-validation')
 
 let router = express.Router();
 
-router.post("/register", formValidation.register,formatter.register, async (req, res) => {
+router.post("/register",validate(formValidation.register), async (req, res) => {
 	const registerInfo = {
 		sid: req.body.sid,
 		username: req.body.username,
