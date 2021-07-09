@@ -14,13 +14,17 @@ router.post("/login", validate(formValidation.login), async (req, res) => {
     password: SHA256(req.body.password),
   };
   // 搜尋 loginInfo
-  let doc = await userModel.findOne(loginInfo);
+  let userDoc = await userModel.findOne(loginInfo);
   // 檢查帳號密碼是否正確
-  if (doc === null) {
+  if (userDoc === null) {
     res.status(401).json({ message: "Wrong Sid or password" });
   } else {
-    const token = jwt.sign({ sid: doc.sid }, serect_key, { expiresIn: "1h" });
-    res.status(200).json({ sid: loginInfo.sid, token: token });
+    const token = jwt.sign(
+      { sid: userDoc.sid, isAdmin: userDoc.isAdmin },
+      serect_key,
+      { expiresIn: "1h" }
+    );
+    res.status(200).json({ sid: userDoc.sid, token: token });
   }
 });
 
