@@ -4,11 +4,15 @@ let userModel = require("../models/userModel");
 const formValidation = require("../middlewares/formValidation");
 const { validate } = require("express-validation");
 const { sha256 } = require("js-sha256");
+const authCheck = require("../middlewares/authCheck");
+
+// 驗證 param 跟 jwt 裡的身分
+router.use("/:sid",authCheck.sid);
 
 // 取得用戶基本資料
 router.get("/:sid", async (req, res) => {
   // 透過學號搜尋資料
-  const userDoc = await userModel.findOne({ sid: req.params.sid });
+  const userDoc = await userModel.findOne({ sid: req.params.sid.toUpperCase() });
   const userInfo = {
     username: userDoc.username,
     shiftTime: userDoc.shiftTime,
