@@ -16,3 +16,10 @@ module.exports.register = {
     password: Joi.string().required(),
   }),
 };
+
+module.exports.changePassword = {
+  body: Joi.object({
+    oldPassword: Joi.string().required(),
+    newPassword: Joi.string().required(),
+  }),
+};
