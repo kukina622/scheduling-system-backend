@@ -3,8 +3,10 @@ let mongoose = require("mongoose");
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerOptions = require("./swagger");
-const { ValidationError } = require("express-validation");
 const expressJWT = require("express-jwt");
+
+// errorhandler
+let errorHandler = require("./middlewares/error/errorHandler")
 
 // route
 let registerRoute = require("./routes/registerRoute");
@@ -42,15 +44,8 @@ module.exports = function create_app(mongoURL, serect_key) {
     const specs = swaggerJsdoc(swaggerOptions);
     app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
-    // error handle
-    app.use(function (err, req, res, next) {
-      if (err instanceof ValidationError) {
-        return res.status(err.statusCode).json(err);
-      } else if (err.name === "UnauthorizedError") {
-        return res.status(401).send("Unauthorized");
-      }
-      return res.status(500).json(err);
-    });
+    // error handler
+    app.use(errorHandler);
 
     resolve(app);
   });
