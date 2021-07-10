@@ -1,18 +1,23 @@
 let express = require("express");
 let router = express.Router();
 let userModel = require("../models/userModel");
-const formValidation = require("../middlewares/formValidation");
 const { validate } = require("express-validation");
 const { sha256 } = require("js-sha256");
+
+// middleware
+const formValidation = require("../middlewares/formValidation");
 const authCheck = require("../middlewares/authCheck");
+const appError = require("../middlewares/error/appError");
 
 // 驗證 param 跟 jwt 裡的身分
-router.use("/:sid",authCheck.sid);
+router.use("/:sid", authCheck.sid);
 
 // 取得用戶基本資料
 router.get("/:sid", async (req, res) => {
   // 透過學號搜尋資料
-  const userDoc = await userModel.findOne({ sid: req.params.sid.toUpperCase() });
+  const userDoc = await userModel.findOne({
+    sid: req.params.sid.toUpperCase(),
+  });
   const userInfo = {
     username: userDoc.username,
     shiftTime: userDoc.shiftTime,
@@ -24,7 +29,7 @@ router.get("/:sid", async (req, res) => {
 router.patch(
   "/:sid/password",
   validate(formValidation.changePassword),
-  async (req, res) => {
+  async (req, res, next) => {
     const userInfo = {
       sid: req.params.sid.toUpperCase(),
       password: sha256(req.body.oldPassword),
@@ -39,7 +44,8 @@ router.patch(
     }
 
     // 密碼錯誤
-    return res.status(400).json({ message: "Password Wrong" });
+    let err = new appError(appError.errorMessageEnum.WRONG_PASSWORD, 400);
+    next(err);
   }
 );
 

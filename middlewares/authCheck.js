@@ -1,3 +1,5 @@
+const appError = require("../middlewares/error/appError");
+
 const regex_sid = /^[A-z][0-9]{8}$/;
 
 function getJWTPayload(token) {
@@ -13,8 +15,7 @@ module.exports.sid = function (req, res, next) {
   if (sidInParam === sidInJWT && regex_sid.test(sidInParam)) {
     next();
   } else {
-    let err = new Error();
-    err.name = "UnauthorizedError";
+    let err = new appError(appError.errorMessageEnum.NO_PERMISSION, 403);
     next(err);
   }
 };
