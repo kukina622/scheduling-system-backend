@@ -23,3 +23,12 @@ module.exports.changePassword = {
     newPassword: Joi.string().required(),
   }),
 };
+
+module.exports.updateShiftTime = {
+  body: Joi.object({
+    shiftTime: Joi.array()
+      .items(Joi.number().integer().min(0).max(6))
+      .unique()
+      .allow(null),
+  }),
+};
