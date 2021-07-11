@@ -81,4 +81,13 @@ router.post(
   }
 );
 
+// 取得所有換班資料
+router.get("/all/shift", async (req, res) => {
+  let allShiftData = await shiftModel
+    .find({}, { _id: 0 ,__v:0})
+    .populate({ path: "user_1 user_2", select: "sid username -_id" });
+
+  res.json({ allShiftData: allShiftData });
+});
+
 module.exports = router;
