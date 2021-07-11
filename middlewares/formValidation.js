@@ -1,6 +1,7 @@
 const { Joi } = require("express-validation");
 
 const regex_sid = /^[A-z][0-9]{8}$/;
+const regex_date = /^\d{4}-\d{1,2}-\d{1,2}$/;
 
 module.exports.login = {
   body: Joi.object({
@@ -30,5 +31,13 @@ module.exports.updateShiftTime = {
       .items(Joi.number().integer().min(0).max(6))
       .unique()
       .allow(null),
+  }),
+};
+
+module.exports.shift = {
+  body: Joi.object({
+    orginalDate: Joi.string().regex(regex_date).required(),
+    target: Joi.string().regex(regex_sid).required(),
+    shiftDate: Joi.string().regex(regex_date).required(),
   }),
 };
