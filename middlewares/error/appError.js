@@ -5,6 +5,7 @@ class appError extends Error {
     "INVALID_FORMDATA",
     "WRONG_PASSWORD",
     "NO_PERMISSION",
+    "INVALID_TOKEN"
   ]);
 
   constructor(errorMessage, stateCode) {

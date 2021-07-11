@@ -30,11 +30,11 @@ module.exports = function create_app(mongoURL, serect_key) {
     app.set("serect_key", serect_key);
 
     // jwt驗證
-    // app.use(
-    //   expressJWT({ secret: serect_key, algorithms: ["HS256"] }).unless({
-    //     path: ["/api/login", "/api/register"],
-    //   })
-    // );
+    app.use(
+      expressJWT({ secret: serect_key, algorithms: ["HS256"] }).unless({
+        path: ["/api/login", "/api/register"],
+      })
+    );
 
     // 註冊路由
     app.use("/api", registerRoute);

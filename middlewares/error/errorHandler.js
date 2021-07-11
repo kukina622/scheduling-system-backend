@@ -1,5 +1,6 @@
 let appError = require("./appError");
 const { ValidationError } = require("express-validation");
+const { UnauthorizedError } = require("express-jwt");
 
 function errorHandler(err, req, res, next) {
   if (err instanceof ValidationError) {
@@ -10,8 +11,9 @@ function errorHandler(err, req, res, next) {
       return appError.errorMessageEnum[key] === err.errorMessage;
     });
     return res.status(err.stateCode).json({ message: errorMessage });
+  } else if (err instanceof UnauthorizedError) { //JWT 錯誤
+    return res.status(401).json({ message: "INVALID_TOKEN" });
   }
-
   return res.status(500).json(err);
 }
 
