@@ -12,6 +12,7 @@ let errorHandler = require("./middlewares/error/errorHandler")
 let registerRoute = require("./routes/registerRoute");
 let loginRoute = require("./routes/loginRoute");
 let userRoute = require("./routes/userRoute");
+let shiftTimeRoute = require("./routes/shiftTimeRoute")
 
 module.exports = function create_app(mongoURL, serect_key) {
   let app = express();
@@ -39,6 +40,7 @@ module.exports = function create_app(mongoURL, serect_key) {
     app.use("/api", registerRoute);
     app.use("/api", loginRoute);
     app.use("/api/user", userRoute);
+    app.use("/api/shifttime",shiftTimeRoute)
 
     //swagger open api
     const specs = swaggerJsdoc(swaggerOptions);
