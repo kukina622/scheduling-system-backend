@@ -1,5 +1,6 @@
 let express = require("express");
 let mongoose = require("mongoose");
+let cors = require('cors');
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerOptions = require("./swagger");
@@ -17,6 +18,7 @@ let shiftTimeRoute = require("./routes/shiftTimeRoute")
 module.exports = function create_app(mongoURL, serect_key) {
   let app = express();
   return new Promise(async (resolve) => {
+    app.use(cors())
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     await mongoose.connect(mongoURL, {
