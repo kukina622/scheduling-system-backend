@@ -52,12 +52,12 @@ router.post(
     let orginalDate = new Date(
       orginalDateArray[0],
       orginalDateArray[1] - 1,
-      orginalDateArray[2] + 1
+      orginalDateArray[2]
     );
     let shiftDate = new Date(
       shiftDateArray[0],
       shiftDateArray[1] - 1,
-      shiftDateArray[2] + 1
+      shiftDateArray[2]
     );
     // 檢查目標存在與否
     let isTargetExisted = await userModel.exists({ sid: target_SID });
@@ -90,4 +90,55 @@ router.get("/all/shift", async (req, res) => {
   res.json({ allShiftData: allShiftData });
 });
 
+// 刪掉換班資料
+router.post(
+  "/:sid/shift/delete",
+  authCheck.sid,
+  validate(formValidation.shift),
+  async (req, res, next) => {
+    const sid = req.params.sid.toUpperCase();
+    const target_SID = req.body.target.toUpperCase();
+    let orginalDateArray = req.body.orginalDate.split("-").map((n) => Number(n));
+    let shiftDateArray = req.body.shiftDate.split("-").map((n) => Number(n));
+    let orginalDate = new Date(
+      orginalDateArray[0],
+      orginalDateArray[1] - 1,
+      orginalDateArray[2]
+    );
+    let shiftDate = new Date(
+      shiftDateArray[0],
+      shiftDateArray[1] - 1,
+      shiftDateArray[2]
+    );
+    // 檢查目標存在與否
+    let isTargetExisted = await userModel.exists({ sid: target_SID });
+    if (isTargetExisted) {
+      // 取得目標對象的objectId
+      let objectIdOfTarget = (await userModel.findOne({ sid: target_SID }, { _id: 1 }))._id;
+      // 取得自己的objectId
+      let objectIdOfOwn = (await userModel.findOne({ sid: sid }, { _id: 1 }))._id;
+      // 刪除document
+      
+      // 刪除user_1是sid的document
+      await shiftModel.deleteMany({
+        user_1: objectIdOfOwn,
+        shiftDate_1: orginalDate,
+        user_2: objectIdOfTarget,
+        shiftDate_2: shiftDate,
+      });
+
+      // 刪除user_1是target的document
+      await shiftModel.deleteMany({
+        user_1: objectIdOfTarget,
+        shiftDate_1: shiftDate,
+        user_2: objectIdOfOwn,
+        shiftDate_2: orginalDate,
+      });
+      res.status(200).end();
+    }else{
+      let err = new appError(appError.errorMessageEnum.UNKNOWN_USER,400)
+      next(err)
+    }
+  }
+);
 module.exports = router;
