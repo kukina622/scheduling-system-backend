@@ -2,7 +2,7 @@ let express = require("express");
 let router = express.Router();
 let userModel = require("../models/userModel");
 const { validate } = require("express-validation");
-const { sha256 } = require("js-sha256");
+const bcrypt = require("bcrypt");
 
 // middleware
 const formValidation = require("../middlewares/formValidation");
@@ -30,16 +30,25 @@ router.patch(
   "/:sid/password",
   validate(formValidation.changePassword),
   async (req, res, next) => {
-    const userInfo = {
-      sid: req.params.sid.toUpperCase(),
-      password: sha256(req.body.oldPassword),
-    };
-    const newPassword = sha256(req.body.newPassword);
+    const saltRounds = req.app.get("saltRounds");
+    let sid = req.params.sid.toUpperCase();
+    let oldPassword = req.body.oldPassword;
+    let newPassword = req.body.newPassword;
+
+    // 搜尋使用者資訊
+    let userDoc = await userModel.findOne({ sid: sid });
     // 檢查密碼
-    const isPasswordCorrect = await userModel.exists(userInfo);
+    const isPasswordCorrect = await bcrypt.compare(oldPassword, userDoc.password);
+
     if (isPasswordCorrect) {
+      //產生新密碼的雜湊
+      let newPassword_hash = await bcrypt.hash(newPassword, saltRounds);
+
       // 更新密碼
-      await userModel.updateOne(userInfo, { $set: { password: newPassword } });
+      await userModel.updateOne(
+        { sid: sid },
+        { $set: { password: newPassword_hash } }
+      );
       return res.end();
     }
 

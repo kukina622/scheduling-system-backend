@@ -14,9 +14,6 @@ let userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    validate: (v) => {
-      return v.length === 64;
-    },
     require: true,
   },
   shiftTime: {
