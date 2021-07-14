@@ -9,7 +9,15 @@ function errorHandler(err, req, res, next) {
     resError = new appError(appError.errorMessageEnum.INVALID_FORMDATA, 400);
   } else if (err instanceof UnauthorizedError) {
     //JWT 錯誤
-    resError = new appError(appError.errorMessageEnum.INVALID_TOKEN, 401);
+    let message = err.message;
+    switch (message) {
+      case "jwt expired":
+        resError = new appError(appError.errorMessageEnum.TOKEN_EXPIRED, 401);
+        break;
+      default:
+        resError = new appError(appError.errorMessageEnum.INVALID_TOKEN, 401);
+        break;
+    }
   } else {
     resError = err;
   }

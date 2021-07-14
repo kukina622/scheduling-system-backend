@@ -6,7 +6,8 @@ class appError extends Error {
     "WRONG_PASSWORD",
     "NO_PERMISSION",
     "INVALID_TOKEN",
-    "UNKNOWN_USER"
+    "UNKNOWN_USER",
+    "TOKEN_EXPIRED"
   ]);
 
   constructor(errorMessage, stateCode) {
